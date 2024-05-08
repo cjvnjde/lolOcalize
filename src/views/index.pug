@@ -1,0 +1,17 @@
+doctype html
+html
+    head
+        meta(charset='UTF-8')
+        title LoL
+
+        link(rel='preconnect', href='https://fonts.googleapis.com')
+        link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin)
+        link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap', rel='stylesheet')
+    body
+        table
+          each value, key in data
+              tr
+                  td= key
+                  td
+                      pre= value
+    script(src='https://unpkg.com/htmx.org@1.9.12')

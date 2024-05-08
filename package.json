@@ -1,0 +1,35 @@
+{
+  "name": "lolocalize",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "lol": "node --watch src/cli.js"
+  },
+  "keywords": [],
+  "author": "Vitalij Nykyforenko <vitalij.nykyforenko@gmail.com>",
+  "license": "MIT",
+  "description": "",
+  "bin": {
+    "lolocalize": "build/src/bin/cli.js",
+    "lol": "build/src/bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cjvnjde/lolOcalize.git"
+  },
+  "homepage": "https://github.com/raineorshine/npm-check-updates",
+  "bugs": {
+    "url": "https://github.com/cjvnjde/lolOcalize/issues"
+  },
+  "engines": {
+    "node": "^18.18.0 || >=20.0.0",
+    "npm": ">=8.12.1"
+  },
+  "dependencies": {
+    "@fastify/static": "^7.0.4",
+    "@fastify/view": "^9.1.0",
+    "fastify": "^4.27.0",
+    "pug": "^3.0.2"
+  }
+}
