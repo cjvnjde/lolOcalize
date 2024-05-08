@@ -8,10 +8,17 @@ html
         link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin)
         link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap', rel='stylesheet')
     body
-        table
+        table#t
           each value, key in data
               tr
                   td= key
                   td
                       pre= value
+
+        button(
+            hx-post="/htmx/locale"
+            hx-trigger="click"
+            hx-target="#t"
+            hx-swap="beforeend"
+        ) add
     script(src='https://unpkg.com/htmx.org@1.9.12')

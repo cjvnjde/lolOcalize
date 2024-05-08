@@ -3,6 +3,7 @@ import { createLocaleManager } from "./createLocaleManager.js";
 import path from "node:path";
 import fastifyStatic from "@fastify/static";
 import fastifyView from "@fastify/view";
+import formbody from "@fastify/formbody";
 import pug from "pug";
 
 export async function startServer() {
@@ -11,7 +12,7 @@ export async function startServer() {
   });
 
   const fastify = Fastify();
-
+  fastify.register(formbody);
   fastify.register(fastifyStatic, {
     root: path.join(import.meta.dirname, "public"),
   });
@@ -23,21 +24,23 @@ export async function startServer() {
   });
 
   fastify.get("/", (req, reply) => {
-    let data = localeManager.getAll();
+    let data = localeManager.getAll("en");
     data = Object.fromEntries(Object.entries(data).map(([key, value]) => {
-      return [key, JSON.stringify(value)]
-    }))
+      return [key, JSON.stringify(value)];
+    }));
 
-    reply.view("index.pug", { data });
+    return reply.view("index.pug", { data });
   });
 
   fastify.post("/htmx/locale", async function handler(request, reply) {
-    return localeManager.addField("assets/en/common.json", "test22", "value");
+    await localeManager.addField("testLocales/en/common.json", "test22", "value");
+
+    return reply.view("row.pug", { key: "test222", value: "value" });
   });
 
 
   fastify.delete("/htmx/locale", async function handler(request, reply) {
-    return localeManager.deleteField("assets/en/common.json", "test22");
+    return localeManager.deleteField("testLocales/en/common.json", "test22");
   });
 
   try {

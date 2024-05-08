@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const storage = new Map();
+const storage = {};
 
 function parseLocalPath(path) {
   const [namespace, locale] = path.replace(".json", "").split("/").reverse();
@@ -56,58 +56,43 @@ function writeJSONFile(filename, data) {
   return writeFile(filename, JSON.stringify(data, null, 2), "utf8");
 }
 
+function updateStorage(filepath) {
+  const { locale, namespace } = parseLocalPath(filepath);
+  const content = readJSONFile(filepath);
+
+  if (!storage[locale]) {
+    storage[locale] = {};
+  }
+
+  storage[locale][namespace] = content;
+}
+
 export function createLocaleManager(rootFolder, onFileChange) {
   watchDirectories(rootFolder, (filepath) => {
+    updateStorage(filepath);
     const { locale, namespace } = parseLocalPath(filepath);
-    const content = readJSONFile(filepath);
-
-    storage.set(filepath, {
-      locale,
-      namespace,
-      content,
-    });
-
-    onFileChange(storage.get(filepath));
+    onFileChange(storage[locale][namespace]);
   });
 
-  traverseDirectory(rootFolder, (filepath) => {
-    const { locale, namespace } = parseLocalPath(filepath);
-    const content = readJSONFile(filepath);
-
-    storage.set(filepath, {
-      locale,
-      namespace,
-      content,
-    });
-  });
+  traverseDirectory(rootFolder, updateStorage);
 
   return {
-    getAll: () => Object.fromEntries(storage.entries()),
+    getAll: (locale) => storage[locale],
     deleteField: async (path, field) => {
-      if (storage.has(path)) {
-        const data = storage.get(path);
-        const { [field]: _, ...content } = data.content;
 
-        storage.set(path, {
-          ...data,
-          content,
-        });
+      const { locale, namespace } = parseLocalPath(path);
+      if (storage[locale]?.[namespace]?.[field]) {
+        delete storage[locale][namespace][field];
 
-        await writeJSONFile(path, storage.get(path).content);
+        await writeJSONFile(path, storage[locale][namespace]);
       }
     },
     addField: async (path, field, value) => {
-      if (storage.has(path)) {
-        const data = storage.get(path);
+      const { locale, namespace } = parseLocalPath(path);
+      if (storage[locale]?.[namespace]) {
+        storage[locale][namespace][field] = value;
 
-        storage.set(path, {
-          ...data,
-          content: {
-            ...data.content,
-            [field]: value,
-          },
-        });
-        await writeJSONFile(path, storage.get(path).content);
+        await writeJSONFile(path, storage[locale][namespace]);
       }
     },
   };
