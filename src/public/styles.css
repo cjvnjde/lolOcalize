@@ -1,0 +1,51 @@
+:root {
+    --bg: white;
+    --controls-bg: #F3F4F6;
+    --border: #D1D5DB;
+}
+
+body {
+    background-color: var(--bg);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    gap: 2rem;
+}
+
+.header__search {
+    display: flex;
+    flex-grow: 1;
+}
+
+.header__search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border-width: 1px;
+    border-color: var(--border);
+    border-radius: 0.375rem;
+    background-color: var(--controls-bg);
+}
+
+.header__select {
+    display: flex;
+    min-width: 200px;
+}
+
+.header__select-input {
+    width: 100%;
+    padding: 0.5rem;
+    border-width: 1px;
+    border-color: var(--border);
+    border-radius: 0.375rem;
+    background-color: var(--controls-bg);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}

@@ -3,22 +3,20 @@ html
     head
         meta(charset='UTF-8')
         title LoL
-
         link(rel='preconnect', href='https://fonts.googleapis.com')
         link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin)
         link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap', rel='stylesheet')
+        link(href='https://cdn.jsdelivr.net/npm/gardevoir', rel='stylesheet')
+        link(href='./styles.css', rel='stylesheet')
     body
-        table#t
-          each value, key in data
-              tr
-                  td= key
-                  td
-                      pre= value
+        include header.pug
+        include mixins/content
 
-        button(
+        +content(data)
+    button(
             hx-post="/htmx/locale"
             hx-trigger="click"
-            hx-target="#t"
+            hx-target="#content"
             hx-swap="beforeend"
         ) add
     script(src='https://unpkg.com/htmx.org@1.9.12')

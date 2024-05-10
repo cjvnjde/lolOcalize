@@ -1,0 +1,13 @@
+header.header
+    div.header__search
+        input.header__search-input(
+            type='search',
+            name='search'
+            placeholder='Search',
+            hx-post='/search',
+            hx-trigger='input changed delay:500ms, search'
+            hx-target="#content"
+        )
+    div.header__select
+        select.header__select-input
+            option(value='1') test

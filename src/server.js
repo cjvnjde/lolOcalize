@@ -1,16 +1,12 @@
 import Fastify from "fastify";
-import { createLocaleManager } from "./createLocaleManager.js";
+import { createLocaleManager } from "./engine.js";
 import path from "node:path";
 import fastifyStatic from "@fastify/static";
 import fastifyView from "@fastify/view";
 import formbody from "@fastify/formbody";
 import pug from "pug";
 
-export async function startServer() {
-  const localeManager = createLocaleManager("./testLocales", (path) => {
-    console.log("File has changed ", path);
-  });
-
+function initFastify() {
   const fastify = Fastify();
   fastify.register(formbody);
   fastify.register(fastifyStatic, {
@@ -22,6 +18,15 @@ export async function startServer() {
     },
     root: path.join(import.meta.dirname, "views"),
   });
+  return fastify;
+}
+
+export async function startServer() {
+  const localeManager = createLocaleManager("./testLocales", (path) => {
+    console.log("File has changed ", path);
+  });
+
+  const fastify = initFastify()
 
   fastify.get("/", (req, reply) => {
     let data = localeManager.getAll("en");
@@ -29,6 +34,7 @@ export async function startServer() {
       return [key, JSON.stringify(value)];
     }));
 
+    console.log(data);
     return reply.view("index.pug", { data });
   });
 
@@ -38,6 +44,20 @@ export async function startServer() {
     return reply.view("row.pug", { key: "test222", value: "value" });
   });
 
+  fastify.post("/search", {
+    schema: {
+      body: {
+        type: "object",
+        properties: {
+          search: { type: "string" },
+        },
+      },
+    },
+    handler(request, reply) {
+      console.log(request.body.search);
+      return reply.view("search.pug", { result: {a: "tste"} });
+    },
+  });
 
   fastify.delete("/htmx/locale", async function handler(request, reply) {
     return localeManager.deleteField("testLocales/en/common.json", "test22");

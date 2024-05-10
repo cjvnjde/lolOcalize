@@ -1,0 +1,6 @@
+include row
+
+mixin content(data)
+    table#content
+      each value, key in data
+        +row(key, value)
