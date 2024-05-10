@@ -51,8 +51,9 @@ export async function startServer() {
             },
         },
         handler(request, reply) {
-            console.log(request.body.search);
-            return reply.view("search.pug", {result: {a: "tste"}});
+            const entries = localeEngine.getEntries("en", request.body.search);
+
+            return reply.view("search.pug", {entries});
         },
     });
 

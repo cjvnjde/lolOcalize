@@ -55,19 +55,32 @@ function formatKey(key, namespace) {
     return `${namespace}:${key}`;
 }
 
+function escapeRegExp(term) {
+    return term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function searchPairs(pairs, term) {
+    if (!term) {
+        return pairs;
+    }
+    let escapedTerm = escapeRegExp(term);
+    const regex = new RegExp(escapedTerm, "i");
+    return pairs.filter(pair => regex.test(pair[0]) || regex.test(pair[1]));
+}
+
 export async function getEngine(rootFolder, onFileChange) {
     await traverseDirectory(rootFolder, updateCache);
 
     return {
         getLocales: () => Array.from(Object.keys(cache)),
-        getEntries: (locale) => {
-            return Object.entries(cache[locale]).reduce((acc, [namespace, value]) => {
+        getEntries: (locale, search) => {
+            return searchPairs(Object.entries(cache[locale]).reduce((acc, [namespace, value]) => {
                 Object.entries(value).forEach(([key, text]) => {
                     acc.push([formatKey(key, namespace), text]);
                 });
 
                 return acc;
-            }, []);
+            }, []), search);
         },
         getAll: (locale) => cache[locale],
         deleteField: async (path, field) => {
