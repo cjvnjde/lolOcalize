@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import {readFile, writeFile} from "node:fs/promises";
+import {readdir, readFile, stat, writeFile} from "node:fs/promises";
 import path from "node:path";
 
 const cache = {};
@@ -22,16 +21,19 @@ async function readJSONFile(filePath) {
     }
 }
 
-function traverseDirectory(dir, fileCallback) {
-    fs.readdirSync(dir).forEach(file => {
+async function traverseDirectory(dir, fileCallback) {
+    const files = await readdir(dir);
+
+    await Promise.all(files.map(async file => {
         const filePath = path.join(dir, file);
-        const stats = fs.statSync(filePath);
+        const stats = await stat(filePath);
+
         if (stats.isDirectory()) {
-            traverseDirectory(filePath, fileCallback);
+            await traverseDirectory(filePath, fileCallback);
         } else if (stats.isFile() && path.extname(filePath) === ".json") {
             fileCallback(filePath);
         }
-    });
+    }));
 }
 
 function writeJSONFile(filename, data) {
@@ -49,10 +51,24 @@ async function updateCache(filepath) {
     cache[locale][namespace] = content;
 }
 
-export function createLocaleManager(rootFolder, onFileChange) {
-    traverseDirectory(rootFolder, updateCache);
+function formatKey(key, namespace) {
+    return `${namespace}:${key}`;
+}
+
+export async function getEngine(rootFolder, onFileChange) {
+    await traverseDirectory(rootFolder, updateCache);
 
     return {
+        getLocales: () => Array.from(Object.keys(cache)),
+        getEntries: (locale) => {
+            return Object.entries(cache[locale]).reduce((acc, [namespace, value]) => {
+                Object.entries(value).forEach(([key, text]) => {
+                    acc.push([formatKey(key, namespace), text]);
+                });
+
+                return acc;
+            }, []);
+        },
         getAll: (locale) => cache[locale],
         deleteField: async (path, field) => {
 

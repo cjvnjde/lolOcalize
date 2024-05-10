@@ -1,6 +1,11 @@
 include row
 
-mixin content(data)
+mixin content(entries)
     table#content
-      each value, key in data
-        +row(key, value)
+        thead
+            tr
+                th key
+                th text
+        tbody
+            each value in entries
+                +row(value[0], value[1])

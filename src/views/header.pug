@@ -10,4 +10,5 @@ header.header
         )
     div.header__select
         select.header__select-input
-            option(value='1') test
+            each locale in locales
+                option(value=locale)= locale

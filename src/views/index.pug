@@ -12,11 +12,11 @@ html
         include header.pug
         include mixins/content
 
-        +content(data)
+        +content(entries)
     button(
-            hx-post="/htmx/locale"
-            hx-trigger="click"
-            hx-target="#content"
-            hx-swap="beforeend"
-        ) add
+        hx-post="/htmx/locale"
+        hx-trigger="click"
+        hx-target="#content"
+        hx-swap="beforeend"
+    ) add
     script(src='https://unpkg.com/htmx.org@1.9.12')
