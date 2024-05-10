@@ -92,12 +92,14 @@ export async function getEngine(rootFolder, onFileChange) {
                 await writeJSONFile(path, cache[locale][namespace]);
             }
         },
-        addField: async (path, field, value) => {
-            const {locale, namespace} = extractLocaleInfoFromPath(path);
+        addField: async (locale, key, value) => {
+            const [namespace, field] = key.split(":");
+
             if (cache[locale]?.[namespace]) {
                 cache[locale][namespace][field] = value;
 
-                await writeJSONFile(path, cache[locale][namespace]);
+                console.log(namespace, field, value);
+                await writeJSONFile(`${rootFolder}/${locale}/${namespace}.json`, cache[locale][namespace]);
             }
         },
     };

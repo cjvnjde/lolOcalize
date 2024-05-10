@@ -24,9 +24,7 @@ function initFastify() {
 let selectedLocale = "en";
 
 export async function startServer() {
-    const localeEngine = await getEngine("./testLocales", (path) => {
-        console.log("File has changed ", path);
-    });
+    const localeEngine = await getEngine("./testLocales");
 
     const fastify = initFastify();
 
@@ -70,6 +68,32 @@ export async function startServer() {
             const locales = localeEngine.getLocales();
 
             return reply.view("body.pug", {entries, locales, selected: selectedLocale});
+        },
+    });
+
+    fastify.get("/open-add", (req, reply) => {
+        return reply.view("add-modal.pug");
+    });
+
+    fastify.get("/close-modal", (req, reply) => {
+        return reply.view("empty.pug");
+    });
+
+    fastify.post("/add", {
+        schema: {
+            body: {
+                type: "object",
+                properties: {
+                    key: {type: "string"},
+                    value: {type: "string"},
+                },
+            },
+        },
+        handler(req, reply) {
+            const {key, value} = req.body;
+            localeEngine.addField(selectedLocale, key, value);
+
+            return reply.view("add-response.pug", {key, value});
         },
     });
 

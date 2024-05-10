@@ -6,6 +6,13 @@ mixin content(entries)
             tr
                 th key
                 th text
+                th
+                    button(
+                        type="button",
+                        hx-get="/open-add",
+                        hx-target="body",
+                        hx-swap="beforeend"
+                    ) Add
         tbody
             each value in entries
                 +row(value[0], value[1])

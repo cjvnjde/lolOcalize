@@ -1,0 +1,26 @@
+div.modal
+    div.modal__content
+        div.modal__header
+            p title
+            button(
+                type="button",
+                hx-get="/close-modal",
+                hx-target=".modal",
+                hx-swap="outerHTML"
+            ) &times;
+        form(
+            hx-post='/add',
+            hx-target=".modal",
+            hx-swap="outerHTML"
+        )
+            input.header__search-input(
+                type='text',
+                name='key'
+                placeholder='Key',
+            )
+            input.header__search-input(
+                type='text',
+                name='value'
+                placeholder='Value',
+            )
+            button save

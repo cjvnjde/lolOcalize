@@ -9,5 +9,7 @@ html
         link(href='https://cdn.jsdelivr.net/npm/gardevoir', rel='stylesheet')
         link(href='./styles.css', rel='stylesheet')
         script(src='https://unpkg.com/htmx.org@1.9.12')
+        script
+            htmx.config.useTemplateFragments = true;
     body
         include body.pug
