@@ -1,3 +1,4 @@
+
 header.header
     div.header__search
         input.header__search-input(
@@ -9,6 +10,14 @@ header.header
             hx-target="#content"
         )
     div.header__select
-        select.header__select-input
+        select.header__select-input(
+            name="locale"
+            hx-post='/set-locale',
+            hx-target="body"
+            hx-swap="innerHTML"
+        )
             each locale in locales
-                option(value=locale)= locale
+                if locale === selected
+                    option(value=locale, selected=true)= locale
+                else
+                    option(value=locale)= locale

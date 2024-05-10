@@ -21,6 +21,8 @@ function initFastify() {
     return fastify;
 }
 
+let selectedLocale = "en";
+
 export async function startServer() {
     const localeEngine = await getEngine("./testLocales", (path) => {
         console.log("File has changed ", path);
@@ -29,16 +31,10 @@ export async function startServer() {
     const fastify = initFastify();
 
     fastify.get("/", (req, reply) => {
-        const entries = localeEngine.getEntries("en");
+        const entries = localeEngine.getEntries(selectedLocale);
         const locales = localeEngine.getLocales();
 
-        return reply.view("index.pug", {entries, locales});
-    });
-
-    fastify.post("/htmx/locale", async function handler(request, reply) {
-        await localeEngine.addField("testLocales/en/common.json", "test22", "value");
-
-        return reply.view("row.pug", {key: "test222", value: "value"});
+        return reply.view("index.pug", {entries, locales, selected: selectedLocale});
     });
 
     fastify.post("/search", {
@@ -50,15 +46,31 @@ export async function startServer() {
                 },
             },
         },
-        handler(request, reply) {
-            const entries = localeEngine.getEntries("en", request.body.search);
+        handler(req, reply) {
+            const entries = localeEngine.getEntries(selectedLocale, req.body.search);
 
             return reply.view("search.pug", {entries});
         },
     });
 
-    fastify.delete("/htmx/locale", async function handler(request, reply) {
-        return localeEngine.deleteField("testLocales/en/common.json", "test22");
+
+    fastify.post("/set-locale", {
+        schema: {
+            body: {
+                type: "object",
+                properties: {
+                    locale: {type: "string"},
+                },
+            },
+        },
+        handler(req, reply) {
+            selectedLocale = req.body.locale;
+
+            const entries = localeEngine.getEntries(selectedLocale);
+            const locales = localeEngine.getLocales();
+
+            return reply.view("body.pug", {entries, locales, selected: selectedLocale});
+        },
     });
 
     try {

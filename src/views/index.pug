@@ -8,15 +8,6 @@ html
         link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap', rel='stylesheet')
         link(href='https://cdn.jsdelivr.net/npm/gardevoir', rel='stylesheet')
         link(href='./styles.css', rel='stylesheet')
+        script(src='https://unpkg.com/htmx.org@1.9.12')
     body
-        include header.pug
-        include mixins/content
-
-        +content(entries)
-    button(
-        hx-post="/htmx/locale"
-        hx-trigger="click"
-        hx-target="#content"
-        hx-swap="beforeend"
-    ) add
-    script(src='https://unpkg.com/htmx.org@1.9.12')
+        include body.pug
